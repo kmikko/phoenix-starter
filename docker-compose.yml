@@ -1,0 +1,32 @@
+version: "3"
+services:
+
+  db:
+    image: postgres:10.1
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app_dev
+
+  web:
+    depends_on:
+      - db
+    build:
+      context: .
+    command: mix phx.server
+    volumes:
+      - .:/app
+    ports:
+      - "4000:4000"
+    links:
+      - db
+    environment:
+      MIX_ENV: dev
+      PORT: 4000
+
+volumes:
+  db_data:
